@@ -49,20 +49,18 @@ var getAPI = function () {
     fetch(todayURL).then(function(response) {
         return response.json()
     }).then(function (data) {
-        // Ternary operator to change icon dependent on the forecast
-            (data.weather[0].main === "Snow") ? cityWeather.attr("src", "http://openweathermap.org/img/wn/13d@2x.png") : 
-            (data.weather[0].main === "Clouds") ? cityWeather.attr("src", "http://openweathermap.org/img/wn/02d@2x.png") :
-            (data.weather[0].main === "Rain") ? cityWeather.attr("src", "http://openweathermap.org/img/wn/10d@2x.png") :
-            (data.weather[0].main === "Thunderstorm") ? cityWeather.attr("src", "http://openweathermap.org/img/wn/11d@2x.png") :
-            (data.weather[0].main === "Drizzle") ? cityWeather.attr("src", "http://openweathermap.org/img/wn/09d@2x.png") :
-            cityWeather.attr("src", "http://openweathermap.org/img/wn/01d@2x.png");
-        
         // Returning the function if there is an error with the value inputted
         if (data.cod !== 200) {
             return;
         }
+        // Ternary operator to change icon dependent on the forecast
+        (data.weather[0].main === "Snow") ? cityWeather.attr("src", "http://openweathermap.org/img/wn/13d@2x.png") : 
+        (data.weather[0].main === "Clouds") ? cityWeather.attr("src", "http://openweathermap.org/img/wn/02d@2x.png") :
+        (data.weather[0].main === "Rain") ? cityWeather.attr("src", "http://openweathermap.org/img/wn/10d@2x.png") :
+        (data.weather[0].main === "Thunderstorm") ? cityWeather.attr("src", "http://openweathermap.org/img/wn/11d@2x.png") :            
+        (data.weather[0].main === "Drizzle") ? cityWeather.attr("src", "http://openweathermap.org/img/wn/09d@2x.png") : 
+        cityWeather.attr("src", "http://openweathermap.org/img/wn/01d@2x.png");
 
-        console.log(data);
         $("#city-name").text(data.name + dayjs().format("(D/M/YYYY)"));
         $("#temp").text("Temp: " + data.main.temp + "°C")
 
@@ -73,16 +71,13 @@ var getAPI = function () {
         fetch(forecastURL).then(function(response) {
             return response.json();
         }).then(function (data) {
-            console.log(data);
-
+          
             var today = dayjs();
            
             for (let i = 0; i < 6; i++) {
                 let nextDay = today.add(i, 'day');
-                $("#date-" + i).text(nextDay.format('DD/MM/YYYY')).addClass('')
+                $("#date-" + i).text(nextDay.format('DD/MM/YYYY'));
     
-                console.log(data.list[i].weather[0].main);
-                
                 // Ternary operator to change icon dependent on the forecast
                 (data.list[i].weather[0].main === "Snow") ? $("#forecast-image-" + i).attr("src", "http://openweathermap.org/img/wn/13d@2x.png") : 
                 (data.list[i].weather[0].main === "Clouds") ? $("#forecast-image-" + i).attr("src", "http://openweathermap.org/img/wn/02d@2x.png") :
@@ -96,7 +91,6 @@ var getAPI = function () {
                 $("#forecast-humidity-" + i).text("Humidity: " + data.list[i].main.humidity + "%"); 
             }
         })
-    
         // Adding all the information on the weather if request is acceptable
         widgets.addClass('bg-primary text-white border border-secondary');
         $('.current').removeClass('hide');
