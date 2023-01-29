@@ -2,6 +2,19 @@
     box-sizing: border-box;
 }
 
+body {
+    font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+}
+
 .bg-primary {
     background-color: #7c2ff8;
+}
+
+.hide {
+    display: none;
+}
+
+#searches {
+    position: absolute;
 }
