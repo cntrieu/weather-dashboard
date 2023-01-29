@@ -5,28 +5,30 @@ var searchBtn = $('#search-btn');
 var formID = $('#city-form');
 var recentSearches = $('#searches');
 var widgets = $('.widgets');
+var cityWeather = $('#city-weather');
 
 $(function() {
     loadSearch();
 })
 
+// Using 'this' to get the class that will be the input from user. We replace the other classes with an empty string so it does not add those classes to the input
+var searchHx = function () {
+    var clickedClass = $(this).attr('class');
+    city = clickedClass.replace("m-2 py-2 text-center col-11 border-0 rounded","");
+    getAPI();
+}
+
 var loadSearch = function () {
     var savedItem = $("<button>").text(localStorage.getItem("history"))
     savedItem.addClass(localStorage.getItem("history")).addClass('m-2 py-2 text-center col-11 border-0 rounded');
-
-    // Using 'this' to get the class that will be the input from user. We replace the other classes with an empty string so it does not add those classes to the input
-    savedItem.on("click", function () {
-        var clickedClass = $(this).attr('class');
-        city = clickedClass.replace("m-2 py-2 text-center col-11 border-0 rounded","");
-        getAPI();
-    });
+    savedItem.on("click", searchHx);
 
     // Limit the amount of prepended elements by overwriting preexisting prepended elements from oldest
     var limit = 5;
     if (recentSearches.children().length >= limit) {
         recentSearches.children().slice(limit - 1).remove();
     }
-
+      
     recentSearches.prepend(savedItem);
 }
 
@@ -47,7 +49,14 @@ var getAPI = function () {
     fetch(todayURL).then(function(response) {
         return response.json()
     }).then(function (data) {
-
+        // Ternary operator to change icon dependent on the forecast
+            (data.weather[0].main === "Snow") ? cityWeather.attr("src", "http://openweathermap.org/img/wn/13d@2x.png") : 
+            (data.weather[0].main === "Clouds") ? cityWeather.attr("src", "http://openweathermap.org/img/wn/02d@2x.png") :
+            (data.weather[0].main === "Rain") ? cityWeather.attr("src", "http://openweathermap.org/img/wn/10d@2x.png") :
+            (data.weather[0].main === "Thunderstorm") ? cityWeather.attr("src", "http://openweathermap.org/img/wn/11d@2x.png") :
+            (data.weather[0].main === "Drizzle") ? cityWeather.attr("src", "http://openweathermap.org/img/wn/09d@2x.png") :
+            cityWeather.attr("src", "http://openweathermap.org/img/wn/01d@2x.png");
+        
         // Returning the function if there is an error with the value inputted
         if (data.cod !== 200) {
             return;
@@ -65,7 +74,7 @@ var getAPI = function () {
             return response.json();
         }).then(function (data) {
             console.log(data);
-           
+
             var today = dayjs();
            
             for (let i = 0; i < 6; i++) {
@@ -85,7 +94,6 @@ var getAPI = function () {
                 $("#forecast-temp-" + i).text("Temp: " + data.list[i].main.temp + "°C");
                 $("#forecast-wind-" + i).text("Wind: " + (data.list[i].wind.speed * 3.6).toFixed() + "KMPH");
                 $("#forecast-humidity-" + i).text("Humidity: " + data.list[i].main.humidity + "%"); 
-                
             }
         })
     
@@ -96,8 +104,6 @@ var getAPI = function () {
     })
 }
 
-
-
 var saveHistory = function () {
     if (input.val() === "") {
         return
@@ -107,7 +113,6 @@ var saveHistory = function () {
     localStorage.setItem("history", city);
     loadSearch();
 }
-
 
 formID.submit(initial)
 formID.submit(saveHistory);
