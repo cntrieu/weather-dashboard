@@ -14,3 +14,5 @@ This application uses a variety of APIs including:
 * Openweathermap
 
 Here is a gif on the functionality of the application:
+
+![gif showcasing how the application works](./screen%20gif/weather.gif)

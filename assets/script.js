@@ -57,6 +57,7 @@ var getAPI = function () {
         // Remove the appended element because it is invalid and remove from localstorage so it will not append on page load
         recentSearches.children().first().remove();
         localStorage.removeItem("history");
+        console.error("ERROR: " + response.status)
         return;
     }).then(function (data) {
         console.log(data);
