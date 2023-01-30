@@ -7,9 +7,36 @@ var recentSearches = $('#searches');
 var widgets = $('.widgets');
 var cityWeather = $('#city-weather');
 
-$(function() {
-    loadSearch();
-})
+var loadSearch = function() {
+
+    // This if statement prevents localstorage from prepending an empty element. Will prepend the most recent search history otherwise
+    if (!localStorage.getItem("history")) {
+        return;
+    } else {
+        var savedItem = $("<button>").text(localStorage.getItem("history"))
+        savedItem.addClass(localStorage.getItem("history")).addClass('m-2 py-2 text-center col-11 border-0 rounded');
+        savedItem.on("click", searchHx);
+    
+        // Max limit of searches to appear in the history is set to 7.
+        var limit = 7;
+        if (recentSearches.children().length >= limit) {
+        recentSearches.children().slice(limit - 1).remove();
+        }   
+
+        // Most recent searches appear at top of history
+        recentSearches.prepend(savedItem);
+       
+    }
+}
+
+var initial = function (e) {
+    if (input.val() === "") {
+        return;
+    }
+    city = input.val().trim();
+    e.preventDefault();
+    getAPI();
+}
 
 // Using 'this' to get the class that will be the input from user. We replace the other classes with an empty string so it does not add those classes to the input
 var searchHx = function () {
@@ -18,41 +45,22 @@ var searchHx = function () {
     getAPI();
 }
 
-var loadSearch = function () {
-    var savedItem = $("<button>").text(localStorage.getItem("history"))
-    savedItem.addClass(localStorage.getItem("history")).addClass('m-2 py-2 text-center col-11 border-0 rounded');
-    savedItem.on("click", searchHx);
-
-    // Limit the amount of prepended elements by overwriting preexisting prepended elements from oldest
-    var limit = 5;
-    if (recentSearches.children().length >= limit) {
-        recentSearches.children().slice(limit - 1).remove();
-    }
-      
-    recentSearches.prepend(savedItem);
-}
-
-var initial = function (e) {
-    if (input.val() === "") {
-        return;
-    }
-    
-    city = input.val().trim();
-    e.preventDefault();
-    getAPI();
-}
-
 var getAPI = function () {
     var todayURL = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + APIKey + "&units=metric";
     var forecastURL = "http://api.openweathermap.org/data/2.5/forecast?q=" + city + "&appid=" + APIKey + "&units=metric";
 
     fetch(todayURL).then(function(response) {
-        return response.json()
+        if (response.ok) {
+            return response.json();
+        } 
+
+        // Remove the appended element because it is invalid and remove from localstorage so it will not append on page load
+        recentSearches.children().first().remove();
+        localStorage.removeItem("history");
+        return;
     }).then(function (data) {
-        // Returning the function if there is an error with the value inputted
-        if (data.cod !== 200) {
-            return;
-        }
+        console.log(data);
+    
         // Ternary operator to change icon dependent on the forecast
         (data.weather[0].main === "Snow") ? cityWeather.attr("src", "http://openweathermap.org/img/wn/13d@2x.png") : 
         (data.weather[0].main === "Clouds") ? cityWeather.attr("src", "http://openweathermap.org/img/wn/02d@2x.png") :
@@ -71,10 +79,9 @@ var getAPI = function () {
         fetch(forecastURL).then(function(response) {
             return response.json();
         }).then(function (data) {
-          
             var today = dayjs();
            
-            for (let i = 0; i < 6; i++) {
+            for (var i = 0; i < 6; i++) {
                 let nextDay = today.add(i, 'day');
                 $("#date-" + i).text(nextDay.format('DD/MM/YYYY'));
     
@@ -95,6 +102,8 @@ var getAPI = function () {
         widgets.addClass('bg-primary text-white border border-secondary');
         $('.current').removeClass('hide');
         $('.5day').removeClass('hide');
+    }).catch(function(error) {
+        // console.error("Unable to connect to API: " + error);
     })
 }
 
@@ -108,5 +117,6 @@ var saveHistory = function () {
     loadSearch();
 }
 
+loadSearch();
 formID.submit(initial)
 formID.submit(saveHistory);
