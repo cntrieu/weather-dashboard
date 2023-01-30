@@ -57,10 +57,8 @@ var getAPI = function () {
         // Remove the appended element because it is invalid and remove from localstorage so it will not append on page load
         recentSearches.children().first().remove();
         localStorage.removeItem("history");
-        console.error("ERROR: " + response.status)
         return;
     }).then(function (data) {
-        console.log(data);
     
         // Ternary operator to change icon dependent on the forecast
         (data.weather[0].main === "Snow") ? cityWeather.attr("src", "http://openweathermap.org/img/wn/13d@2x.png") : 
@@ -103,8 +101,8 @@ var getAPI = function () {
         widgets.addClass('bg-primary text-white border border-secondary');
         $('.current').removeClass('hide');
         $('.5day').removeClass('hide');
-    }).catch(function(error) {
-        // console.error("Unable to connect to API: " + error);
+    }).catch(function() {
+        console.error("ERROR: 404 - Invalid city.");
     })
 }
 
