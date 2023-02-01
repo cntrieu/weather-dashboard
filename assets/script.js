@@ -68,7 +68,7 @@ var getAPI = function () {
           $("#wind").text("Wind: " + (data.wind.speed * 3.6).toFixed() + "KMPH");
           $("#humidity").text("Humidity: " + data.main.humidity + "%");
         },
-        error: function(jqXHR, textStatus, errorThrown) {
+        error: function() {
           // Remove the appended element because it is invalid and remove from localstorage so it will not append on page load
           recentSearches.children().first().remove();
           localStorage.removeItem("history");
