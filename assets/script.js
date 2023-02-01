@@ -49,61 +49,63 @@ var getAPI = function () {
     var todayURL = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + APIKey + "&units=metric";
     var forecastURL = "http://api.openweathermap.org/data/2.5/forecast?q=" + city + "&appid=" + APIKey + "&units=metric";
 
-    fetch(todayURL).then(function(response) {
-        if (response.ok) {
-            return response.json();
-        } 
-
-        // Remove the appended element because it is invalid and remove from localstorage so it will not append on page load
-        recentSearches.children().first().remove();
-        localStorage.removeItem("history");
-        return;
-    }).then(function (data) {
-    
-        // Ternary operator to change icon dependent on the forecast
-        (data.weather[0].main === "Snow") ? cityWeather.attr("src", "http://openweathermap.org/img/wn/13d@2x.png") : 
-        (data.weather[0].main === "Clouds") ? cityWeather.attr("src", "http://openweathermap.org/img/wn/02d@2x.png") :
-        (data.weather[0].main === "Rain") ? cityWeather.attr("src", "http://openweathermap.org/img/wn/10d@2x.png") :
-        (data.weather[0].main === "Thunderstorm") ? cityWeather.attr("src", "http://openweathermap.org/img/wn/11d@2x.png") :            
-        (data.weather[0].main === "Drizzle") ? cityWeather.attr("src", "http://openweathermap.org/img/wn/09d@2x.png") : 
-        cityWeather.attr("src", "http://openweathermap.org/img/wn/01d@2x.png");
-
-        $("#city-name").text(data.name + dayjs().format("(D/M/YYYY)"));
-        $("#temp").text("Temp: " + data.main.temp + "°C");
-
-        // Default wind speed for metric is in meter/sec. This is to convert to KMPH.
-        $("#wind").text("Wind: " + (data.wind.speed * 3.6).toFixed() + "KMPH");
-        $("#humidity").text("Humidity: " + data.main.humidity + "%");
-
-        fetch(forecastURL).then(function(response) {
-            return response.json();
-        }).then(function (data) {
-            var today = dayjs();
-           
-            for (var i = 0; i < 6; i++) {
-                let nextDay = today.add(i, 'day');
-                $("#date-" + i).text(nextDay.format('DD/MM/YYYY'));
-    
-                // Ternary operator to change icon dependent on the forecast
-                (data.list[i].weather[0].main === "Snow") ? $("#forecast-image-" + i).attr("src", "http://openweathermap.org/img/wn/13d@2x.png") : 
-                (data.list[i].weather[0].main === "Clouds") ? $("#forecast-image-" + i).attr("src", "http://openweathermap.org/img/wn/02d@2x.png") :
-                (data.list[i].weather[0].main === "Rain") ? $("#forecast-image-" + i).attr("src", "http://openweathermap.org/img/wn/10d@2x.png") :
-                (data.list[i].weather[0].main === "Thunderstorm") ? $("#forecast-image-" + i).attr("src", "http://openweathermap.org/img/wn/11d@2x.png") :
-                (data.list[i].weather[0].main === "Drizzle") ? $("#forecast-image-" + i).attr("src", "http://openweathermap.org/img/wn/09d@2x.png") :
-                $("#forecast-image-" + i).attr("src", "http://openweathermap.org/img/wn/01d@2x.png");
-    
-                $("#forecast-temp-" + i).text("Temp: " + data.list[i].main.temp + "°C");
-                $("#forecast-wind-" + i).text("Wind: " + (data.list[i].wind.speed * 3.6).toFixed() + "KMPH");
-                $("#forecast-humidity-" + i).text("Humidity: " + data.list[i].main.humidity + "%"); 
-            }
-        })
-        // Adding all the information on the weather if request is acceptable
-        widgets.addClass('bg-primary text-white border border-secondary');
-        $('.current').removeClass('hide');
-        $('.5day').removeClass('hide');
-    }).catch(function() {
-        console.error("ERROR: 404 - Invalid city.");
-    })
+    $.ajax({
+        url: todayURL,
+        type: "GET",
+        success: function(data) {
+          // Ternary operator to change icon dependent on the forecast
+          (data.weather[0].main === "Snow") ? cityWeather.attr("src", "http://openweathermap.org/img/wn/13d@2x.png") : 
+          (data.weather[0].main === "Clouds") ? cityWeather.attr("src", "http://openweathermap.org/img/wn/02d@2x.png") :
+          (data.weather[0].main === "Rain") ? cityWeather.attr("src", "http://openweathermap.org/img/wn/10d@2x.png") :
+          (data.weather[0].main === "Thunderstorm") ? cityWeather.attr("src", "http://openweathermap.org/img/wn/11d@2x.png") :            
+          (data.weather[0].main === "Drizzle") ? cityWeather.attr("src", "http://openweathermap.org/img/wn/09d@2x.png") : 
+          cityWeather.attr("src", "http://openweathermap.org/img/wn/01d@2x.png");
+      
+          $("#city-name").text(data.name + dayjs().format("(D/M/YYYY)"));
+          $("#temp").text("Temp: " + data.main.temp + "°C");
+      
+          // Default wind speed for metric is in meter/sec. This is to convert to KMPH.
+          $("#wind").text("Wind: " + (data.wind.speed * 3.6).toFixed() + "KMPH");
+          $("#humidity").text("Humidity: " + data.main.humidity + "%");
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          // Remove the appended element because it is invalid and remove from localstorage so it will not append on page load
+          recentSearches.children().first().remove();
+          localStorage.removeItem("history");
+        }
+      })
+      $.ajax({
+        url: forecastURL,
+        type: 'GET',
+        dataType: 'json',
+        success: function(data) {
+          var today = dayjs();
+          for (var i = 0; i < 6; i++) {
+            let nextDay = today.add(i, 'day');
+            $("#date-" + i).text(nextDay.format('DD/MM/YYYY'));
+        
+            // Ternary operator to change icon dependent on the forecast
+            (data.list[i].weather[0].main === "Snow") ? $("#forecast-image-" + i).attr("src", "http://openweathermap.org/img/wn/13d@2x.png") : 
+            (data.list[i].weather[0].main === "Clouds") ? $("#forecast-image-" + i).attr("src", "http://openweathermap.org/img/wn/02d@2x.png") :
+            (data.list[i].weather[0].main === "Rain") ? $("#forecast-image-" + i).attr("src", "http://openweathermap.org/img/wn/10d@2x.png") :
+            (data.list[i].weather[0].main === "Thunderstorm") ? $("#forecast-image-" + i).attr("src", "http://openweathermap.org/img/wn/11d@2x.png") :
+            (data.list[i].weather[0].main === "Drizzle") ? $("#forecast-image-" + i).attr("src", "http://openweathermap.org/img/wn/09d@2x.png") :
+            $("#forecast-image-" + i).attr("src", "http://openweathermap.org/img/wn/01d@2x.png");
+        
+            $("#forecast-temp-" + i).text("Temp: " + data.list[i].main.temp + "°C");
+            $("#forecast-wind-" + i).text("Wind: " + (data.list[i].wind.speed * 3.6).toFixed() + "KMPH");
+            $("#forecast-humidity-" + i).text("Humidity: " + data.list[i].main.humidity + "%"); 
+          }
+          // Adding all the information on the weather if request is acceptable
+          widgets.addClass('bg-primary text-white border border-secondary');
+          $('.current').removeClass('hide');
+          $('.5day').removeClass('hide');
+        },
+        error: function() {
+          console.error("ERROR: 404 - Invalid city.");
+        }
+      });
+         
 }
 
 var saveHistory = function () {
