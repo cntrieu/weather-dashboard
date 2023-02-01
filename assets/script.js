@@ -15,7 +15,7 @@ var loadSearch = function() {
     } else {
         var savedItem = $("<button>").text(localStorage.getItem("history"))
         savedItem.addClass(localStorage.getItem("history")).addClass('m-2 py-2 text-center col-11 border-0 rounded');
-        savedItem.on("click", searchHx);
+        savedItem.on("mousedown touchstart", searchHx);
     
         // Max limit of searches to appear in the history is set to 7.
         var limit = 7;
