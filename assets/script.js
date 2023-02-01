@@ -69,11 +69,11 @@ var getAPI = function () {
         cityWeather.attr("src", "http://openweathermap.org/img/wn/01d@2x.png");
 
         $("#city-name").text(data.name + dayjs().format("(D/M/YYYY)"));
-        $("#temp").text("Temp: " + data.main.temp + "°C")
+        $("#temp").text("Temp: " + data.main.temp + "°C");
 
         // Default wind speed for metric is in meter/sec. This is to convert to KMPH.
-        $("#wind").text("Wind: " + (data.wind.speed * 3.6).toFixed() + "KMPH")
-        $("#humidity").text("Humidity: " + data.main.humidity + "%")
+        $("#wind").text("Wind: " + (data.wind.speed * 3.6).toFixed() + "KMPH");
+        $("#humidity").text("Humidity: " + data.main.humidity + "%");
 
         fetch(forecastURL).then(function(response) {
             return response.json();
