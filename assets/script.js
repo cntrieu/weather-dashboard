@@ -46,20 +46,20 @@ var searchHx = function () {
 }
 
 var getAPI = function () {
-    var todayURL = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + APIKey + "&units=metric";
-    var forecastURL = "http://api.openweathermap.org/data/2.5/forecast?q=" + city + "&appid=" + APIKey + "&units=metric";
+    var todayURL = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + APIKey + "&units=metric";
+    var forecastURL = "https://api.openweathermap.org/data/2.5/forecast?q=" + city + "&appid=" + APIKey + "&units=metric";
 
     $.ajax({
         url: todayURL,
         type: "GET",
         success: function(data) {
           // Ternary operator to change icon dependent on the forecast
-          (data.weather[0].main === "Snow") ? cityWeather.attr("src", "http://openweathermap.org/img/wn/13d@2x.png") : 
-          (data.weather[0].main === "Clouds") ? cityWeather.attr("src", "http://openweathermap.org/img/wn/02d@2x.png") :
-          (data.weather[0].main === "Rain") ? cityWeather.attr("src", "http://openweathermap.org/img/wn/10d@2x.png") :
-          (data.weather[0].main === "Thunderstorm") ? cityWeather.attr("src", "http://openweathermap.org/img/wn/11d@2x.png") :            
-          (data.weather[0].main === "Drizzle") ? cityWeather.attr("src", "http://openweathermap.org/img/wn/09d@2x.png") : 
-          cityWeather.attr("src", "http://openweathermap.org/img/wn/01d@2x.png");
+          (data.weather[0].main === "Snow") ? cityWeather.attr("src", "https://openweathermap.org/img/wn/13d@2x.png") : 
+          (data.weather[0].main === "Clouds") ? cityWeather.attr("src", "https://openweathermap.org/img/wn/02d@2x.png") :
+          (data.weather[0].main === "Rain") ? cityWeather.attr("src", "https://openweathermap.org/img/wn/10d@2x.png") :
+          (data.weather[0].main === "Thunderstorm") ? cityWeather.attr("src", "https://openweathermap.org/img/wn/11d@2x.png") :            
+          (data.weather[0].main === "Drizzle") ? cityWeather.attr("src", "https://openweathermap.org/img/wn/09d@2x.png") : 
+          cityWeather.attr("src", "https://openweathermap.org/img/wn/01d@2x.png");
       
           $("#city-name").text(data.name + dayjs().format("(D/M/YYYY)"));
           $("#temp").text("Temp: " + data.main.temp + "°C");
@@ -85,12 +85,12 @@ var getAPI = function () {
             $("#date-" + i).text(nextDay.format('DD/MM/YYYY'));
         
             // Ternary operator to change icon dependent on the forecast
-            (data.list[i].weather[0].main === "Snow") ? $("#forecast-image-" + i).attr("src", "http://openweathermap.org/img/wn/13d@2x.png") : 
-            (data.list[i].weather[0].main === "Clouds") ? $("#forecast-image-" + i).attr("src", "http://openweathermap.org/img/wn/02d@2x.png") :
-            (data.list[i].weather[0].main === "Rain") ? $("#forecast-image-" + i).attr("src", "http://openweathermap.org/img/wn/10d@2x.png") :
-            (data.list[i].weather[0].main === "Thunderstorm") ? $("#forecast-image-" + i).attr("src", "http://openweathermap.org/img/wn/11d@2x.png") :
-            (data.list[i].weather[0].main === "Drizzle") ? $("#forecast-image-" + i).attr("src", "http://openweathermap.org/img/wn/09d@2x.png") :
-            $("#forecast-image-" + i).attr("src", "http://openweathermap.org/img/wn/01d@2x.png");
+            (data.list[i].weather[0].main === "Snow") ? $("#forecast-image-" + i).attr("src", "https://openweathermap.org/img/wn/13d@2x.png") : 
+            (data.list[i].weather[0].main === "Clouds") ? $("#forecast-image-" + i).attr("src", "https://openweathermap.org/img/wn/02d@2x.png") :
+            (data.list[i].weather[0].main === "Rain") ? $("#forecast-image-" + i).attr("src", "https://openweathermap.org/img/wn/10d@2x.png") :
+            (data.list[i].weather[0].main === "Thunderstorm") ? $("#forecast-image-" + i).attr("src", "https://openweathermap.org/img/wn/11d@2x.png") :
+            (data.list[i].weather[0].main === "Drizzle") ? $("#forecast-image-" + i).attr("src", "https://openweathermap.org/img/wn/09d@2x.png") :
+            $("#forecast-image-" + i).attr("src", "https://openweathermap.org/img/wn/01d@2x.png");
         
             $("#forecast-temp-" + i).text("Temp: " + data.list[i].main.temp + "°C");
             $("#forecast-wind-" + i).text("Wind: " + (data.list[i].wind.speed * 3.6).toFixed() + "KMPH");
